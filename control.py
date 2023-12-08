@@ -1,5 +1,5 @@
 import flet as ft
-import tela1
+import tela1, tela2
 
 def init(p):
     global page, telas, cadastros        
@@ -7,6 +7,7 @@ def init(p):
     cadastros = []    
     telas = {
         '0': tela1.view(),
+        '1': tela2.view(),
     }
     
 

@@ -96,7 +96,8 @@ def view():
                                     ft.Container(
                                             content= ft.ElevatedButton(
                                                         text="Pesquisar", 
-                                                        icon="search"
+                                                        icon="search",
+                                                        on_click= navigate_to_tela2
                                                     )#ElevatedButton   
                                     ),#Container                                 
                                 ],
@@ -241,3 +242,6 @@ def error_message(data):
         return str(e)
     else:
         return ''
+    
+def navigate_to_tela2(e):
+    c.page.go('1')
