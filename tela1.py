@@ -14,11 +14,13 @@ components = {
         #add todos os compontens da tela aqui
     }
 
+#imagem
 image_holder = ft.Image(visible=False, fit=ft.ImageFit.CONTAIN, width=100,
         height=100)
 
 selected_file_path = None
 
+# funcao do upload da imagem
 def handle_loaded_file(e: ft.FilePickerResultEvent):
     global selected_file_path
     print(e.files)
@@ -30,6 +32,7 @@ def handle_loaded_file(e: ft.FilePickerResultEvent):
             c.page.update()
     #[{name, path, size}]
 
+#Funcao da mudança do tema
 def changetheme(e):
     c.page.theme_mode = "light" if c.page.theme_mode =="dark" else "dark"
     c.page.update()
@@ -48,6 +51,8 @@ toggledarklight = ft.IconButton(
     style=ft.ButtonStyle(
     color={"":ft.colors.BLACK,"selected":ft.colors.WHITE}))
 
+
+# Funcao que mostre todos os componentes da tela 1
 def view():
     file_picker = ft.FilePicker(on_result=handle_loaded_file)
     c.page.overlay.append(file_picker)
@@ -63,6 +68,7 @@ def view():
                             ft.Column([
                                 ft.Row([image_holder],alignment=ft.MainAxisAlignment.CENTER),
                                 ft.Row([
+                                # Botão de upload da foto
                                 ft.Container(content= 
                                 ft.ElevatedButton(
                                 text="Escolher foto", icon="image", on_click=
@@ -80,6 +86,7 @@ def view():
                             ft.Row(
                                 [
                                     ft.Container(
+                                        #Botao de cadastrar
                                             content= ft.ElevatedButton(
                                                         text="Cadastrar", 
                                                         icon="save", 
