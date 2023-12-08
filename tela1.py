@@ -2,6 +2,7 @@ import flet as ft
 import control as c
 import re
 import base64
+import tela2
 
 components = {
         'tf_nome': ft.Ref[ft.TextField](),
@@ -244,4 +245,5 @@ def error_message(data):
         return ''
     
 def navigate_to_tela2(e):
+    c.menu(e)
     c.page.go('1')

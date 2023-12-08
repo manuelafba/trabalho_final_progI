@@ -29,5 +29,5 @@ def route_change(route):
     
 
 def menu(e):
-    
-    page.go(str(e.control.selected_index))
+    tela2.components["tabela"].current.rows = tela2.data_table()
+    # page.go(str(e.control.selected_index))

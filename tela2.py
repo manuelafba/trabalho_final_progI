@@ -1,102 +1,101 @@
 import flet as ft
 import control as c
+import csv
 
 components = {
-        'tabela': ft.Ref[ft.DataTable](),   
-        'tf_pesquisa': ft.Ref[ft.TextField](),     
-        #add todos os compontens da tela aqui
-    }
+    'tabela': ft.Ref[ft.DataTable](),
+    'tf_pesquisa': ft.Ref[ft.TextField](),
+    # adicione todos os componentes da tela aqui
+}
 
-def view():            
+# Função para ler os dados do arquivo CSV
+def ler_csv():
+    with open('bd.csv', newline='') as csvfile:
+        reader = csv.DictReader(csvfile)
+        data = list(reader)
+        return data
+
+
+cadastros = ler_csv()  # Carregar os dados do CSV
+
+def view():
     return ft.View(
-                    "tela2",
-                    [
-                        ft.Column([ft.TextField(ref=components['tf_pesquisa'], label='Pesquisar', on_change=pesquisar),
-                        ft.DataTable(
-                            width=float('inf'),
-                            ref=components['tabela'],                                                    
-                            columns=[
-                                ft.DataColumn(ft.Text("Nome")),
-                                ft.DataColumn(ft.Text("CPF")),                                
-                                ft.DataColumn(ft.Text("Ações")),                                
-                            ],
-                            #rows=[] são carregadas dinamicamente quando clica no menu de navegação
-                         ),
-                         ft.Row([ft.Container(
-                            #Botao de cadastrar
-                            content= ft.ElevatedButton(
-                            text="Voltar para tela de cadastro",  
-                            on_click= navigate_to_tela2
-                           )#ElevatedButton   
-                         ),#Container
-                         ],
-                         alignment=ft.MainAxisAlignment.CENTER
-                         )
-                        ], 
-                      )             
+        "tela2",
+        [
+            ft.Column([
+                ft.TextField(ref=components['tf_pesquisa'], label='Pesquisar', on_change=None),
+                ft.DataTable(
+                    width=float('inf'),
+                    ref=components['tabela'],
+                    columns=[
+                        ft.DataColumn(ft.Text("Nome")),
+                        ft.DataColumn(ft.Text("Telefone")),
+                        ft.DataColumn(ft.Text("CPF")),
+                        ft.DataColumn(ft.Text("RG")),
+                        ft.DataColumn(ft.Text("Endereço")),
+                        ft.DataColumn(ft.Text("Nascimento")),
+                        ft.DataColumn(ft.Text("E-mail")),
+                        # ft.DataColumn(ft.Text("Upload de Foto")),
+                        ft.DataColumn(ft.Text("Ações")),
                     ],
-                    # navigation_bar=c.barra_navegacao(),
-                    appbar= ft.AppBar(            
-                    title=ft.Text("Sistema de cadastro"),
-                    center_title=False,
-                    bgcolor=ft.colors.SURFACE_VARIANT,                    
-                ),                                                      
+                ),
+                ft.Row([
+                    ft.Container(
+                        content=ft.ElevatedButton(
+                            text="Voltar para tela de cadastro",
+                            on_click=navigate_to_tela1
+                        )
+                    ),
+                ],
+                    alignment=ft.MainAxisAlignment.CENTER
                 )
-
-
-def pesquisar(e):
-    value = components['tf_pesquisa'].current.value
-    components["tabela"].current.rows = [ft.DataRow(cells=data_line(cad)) for cad in c.cadastros if value in cad['nome']]    
-    c.page.update()
-
-
-def remover(e):
-    value = e.control.key
-    c.cadastros = [cad for cad in c.cadastros if value != cad['cpf']]
-    components["tabela"].current.rows = data_table()
-    c.page.update()
-
-
-def atualizar(e):
-    value = e.control.key
-    cadastro = [cad for cad in c.cadastros if value == cad['cpf']][0]
-   # tela3.components['tf_nome'].current.value = cadastro['nome']
-   # tela3.components['tf_cpf'].current.value = cadastro['cpf']
-    c.page.go('2')
-
+            ],scroll=ft.ScrollMode.ALWAYS,
+                        expand=True,),
+        ],
+        appbar=ft.AppBar(
+            title=ft.Text("Sistema de cadastro"),
+            center_title=False,
+            bgcolor=ft.colors.SURFACE_VARIANT,
+        ),
+    )
 
 def data_line(cadastro):
     return [
-                ft.DataCell(ft.Text(cadastro['nome'])),
-                ft.DataCell(ft.Text(cadastro['cpf'])),
-                ft.DataCell(
-                    ft.Row(
-                        [
-                            ft.IconButton(
-                                icon=ft.icons.EDIT,
-                                icon_color="blue",
-                                icon_size=35,
-                                tooltip="Atualizar",
-                                key=cadastro['cpf'],
-                                on_click=atualizar
-                            ),
-                            ft.IconButton(
-                                icon=ft.icons.REMOVE_CIRCLE,
-                                icon_color="red",
-                                icon_size=35,
-                                tooltip="Remover",
-                                key=cadastro['cpf'],
-                                on_click=remover
-                            ),
-                        ]
-                    )                    
-                )
-            
-        ]
+        ft.DataCell(ft.Text(cadastro['Nome'])),
+        ft.DataCell(ft.Text(cadastro['Telefone'])),
+        ft.DataCell(ft.Text(cadastro['CPF'])),
+        ft.DataCell(ft.Text(cadastro['RG'])),
+        ft.DataCell(ft.Text(cadastro['Endereco'])),
+        ft.DataCell(ft.Text(cadastro['Nascimento'])),
+        ft.DataCell(ft.Text(cadastro['E-mail'])),
+        # ft.DataCell(ft.Text(cadastro['Upload de Foto'])),
+        ft.DataCell(
+            ft.Row([
+                ft.IconButton(
+                    icon=ft.icons.EDIT,
+                    icon_color="blue",
+                    icon_size=35,
+                    tooltip="Atualizar",
+                    key=cadastro['CPF'],  # Corrigido para usar a chave correta 'CPF'
+                    on_click=None
+                ),
+                ft.IconButton(
+                    icon=ft.icons.REMOVE_CIRCLE,
+                    icon_color="red",
+                    icon_size=35,
+                    tooltip="Remover",
+                    key=cadastro['CPF'],  # Corrigido para usar a chave correta 'CPF'
+                    on_click=None
+                ),
+            ])
+        )
+    ]
+
+def data_table():
+    data_rows = [ft.DataRow(cells=data_line(cad)) for cad in cadastros]
+    #print(data_rows)  # Adicionar este print para verificar as linhas de dados geradas
+    return data_rows
 
 
-def data_table():    
-  return [ft.DataRow(cells=data_line(cad)) for cad in c.cadastros]
-
-def navigate_to_tela2(e):
-    c.page.go('0')   
+def navigate_to_tela1(e):
+    c.page.go('0')
