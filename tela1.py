@@ -14,18 +14,21 @@ components = {
         #add todos os compontens da tela aqui
     }
 
-# image_holder = ft.Image(visible=False, fit=ft.ImageFit.CONTAIN)
+image_holder = ft.Image(visible=False, fit=ft.ImageFit.CONTAIN, width=100,
+        height=100)
 
-# def handle_loaded_file(e: ft.FilePickerResultEvent):
-#     print(e.files)
-#     if e.files and len(e.files):
-#         with open(e.files[0].path, 'rb') as r:
-#             image_holder.src_base64 = base64.b64enconde(r.read()).decode('utf-8')
-#             image_holder.visible = True
-#             c.page.uptade()
-#     #[{name, path, size}]
-# file_picker = ft.FilePicker(on_result=handle_loaded_file)
-# ft.page.overlay.append(file_picker)
+selected_file_path = None
+
+def handle_loaded_file(e: ft.FilePickerResultEvent):
+    global selected_file_path
+    print(e.files)
+    if e.files and len(e.files):
+        selected_file_path = e.files[0].path
+        with open(e.files[0].path, 'rb') as r:
+            image_holder.src_base64 = base64.b64encode(r.read()).decode('utf-8')
+            image_holder.visible = True
+            c.page.update()
+    #[{name, path, size}]
 
 def changetheme(e):
     c.page.theme_mode = "light" if c.page.theme_mode =="dark" else "dark"
@@ -45,19 +48,25 @@ toggledarklight = ft.IconButton(
     style=ft.ButtonStyle(
     color={"":ft.colors.BLACK,"selected":ft.colors.WHITE}))
 
-def view():     
+def view():
+    file_picker = ft.FilePicker(on_result=handle_loaded_file)
+    c.page.overlay.append(file_picker)
+    def button_clicked(e):
+        file_picker.pick_files(allow_multiple=False, allowed_extensions=['jpg', 'jpeg', 'png']) 
+        c.page.update()
     return ft.View(
                 "tela1",
                 [                           
                     ft.Column(
                         [
                             ft.Row([ft.Container( content=ft.Text("Cadastro", size=20))],alignment=ft.MainAxisAlignment.CENTER),
-                            ft.Column([ft.Row([
-                                # image_holder,
+                            ft.Column([
+                                ft.Row([image_holder],alignment=ft.MainAxisAlignment.CENTER),
+                                ft.Row([
                                 ft.Container(content= 
                                 ft.ElevatedButton(
-                                text="Escolher foto", icon="image", on_click= None
-                                # lambda _:file_picker.pick_files(allow_multiple=False, allowed_extensions=['jpg', 'jpeg', 'png'])
+                                text="Escolher foto", icon="image", on_click=
+                                button_clicked
                                 ))
                                 ],alignment=ft.MainAxisAlignment.CENTER)#Container,
                                 ]),
@@ -74,7 +83,7 @@ def view():
                                             content= ft.ElevatedButton(
                                                         text="Cadastrar", 
                                                         icon="save", 
-                                                        on_click= cadastrar
+                                                        on_click= lambda e: cadastrar(e, selected_file_path)
                                                     )#ElevatedButton   
                                     ),#Container
                                     ft.Container(
@@ -100,7 +109,8 @@ def view():
                 ),    
             )
     
-def cadastrar(e):
+def cadastrar(e, selected_file_path = None):
+    print(selected_file_path)
 
     nome = components['tf_nome'].current.value
     cpf = components['tf_cpf'].current.value
@@ -120,9 +130,9 @@ def cadastrar(e):
     c.page.update()
 
     # Se todos os campos forem válidos, escreva no arquivo CSV
-    if validar_nome(nome) and validar_telefone(telefone) and validar_cpf(cpf) and validar_rg(rg) and validar_email(email) and validar_nascimento(nascimento) and validar_endereco(endereco):
+    if validar_nome(nome) and validar_telefone(telefone) and validar_cpf(cpf) and validar_rg(rg) and validar_email(email) and validar_nascimento(nascimento) and validar_endereco(endereco) and selected_file_path is not None:
         dados = [
-            [nome, telefone, cpf, rg, endereco, nascimento, email, 'path']]
+            [nome, telefone, cpf, rg, endereco, nascimento, email, selected_file_path]]
 
         # Abre o arquivo em modo de escrita
         with open('bd.csv', 'a') as arquivo:
@@ -138,6 +148,8 @@ def cadastrar(e):
         components['tf_endereço'].current.value = ''
         components['tf_nascimento'].current.value = ''
         components['tf_e-mail'].current.value = ''
+        selected_file_path = None
+        image_holder.visible = False
         c.page.update()
 
 def validar_nome(nome):
