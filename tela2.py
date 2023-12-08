@@ -1,6 +1,5 @@
 import flet as ft
-import controle as c
-import tela3
+import control as c
 
 components = {
         'tabela': ft.Ref[ft.DataTable](),   
@@ -49,8 +48,8 @@ def remover(e):
 def atualizar(e):
     value = e.control.key
     cadastro = [cad for cad in c.cadastros if value == cad['cpf']][0]
-    tela3.components['tf_nome'].current.value = cadastro['nome']
-    tela3.components['tf_cpf'].current.value = cadastro['cpf']
+   # tela3.components['tf_nome'].current.value = cadastro['nome']
+   # tela3.components['tf_cpf'].current.value = cadastro['cpf']
     c.page.go('2')
 
 
