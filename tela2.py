@@ -17,13 +17,18 @@ def view():
                             ref=components['tabela'],                                                    
                             columns=[
                                 ft.DataColumn(ft.Text("Nome")),
-                                ft.DataColumn(ft.Text("CPF")),                                
+                                ft.DataColumn(ft.Text("CPF")), 
+                                ft.DataColumn(ft.Text("RG")),  
+                                ft.DataColumn(ft.Text("Telefone")),
+                                ft.DataColumn(ft.Text("Endereço")),    
+                                ft.DataColumn(ft.Text("Data de nascimento")),
+                                ft.DataColumn(ft.Text("E-mail")),                         
                                 ft.DataColumn(ft.Text("Ações")),                                
                             ],
                             #rows=[] são carregadas dinamicamente quando clica no menu de navegação
                          ),               
                     ],
-                    navigation_bar=c.barra_navegacao(),
+                    #navigation_bar=c.barra_navegacao(),
                     appbar= ft.AppBar(            
                     title=ft.Text("Sistema de cadastro"),
                     center_title=False,
@@ -48,8 +53,8 @@ def remover(e):
 def atualizar(e):
     value = e.control.key
     cadastro = [cad for cad in c.cadastros if value == cad['cpf']][0]
-   # tela3.components['tf_nome'].current.value = cadastro['nome']
-   # tela3.components['tf_cpf'].current.value = cadastro['cpf']
+    #tela3.components['tf_nome'].current.value = cadastro['nome']
+    #tela3.components['tf_cpf'].current.value = cadastro['cpf']
     c.page.go('2')
 
 
@@ -57,6 +62,10 @@ def data_line(cadastro):
     return [
                 ft.DataCell(ft.Text(cadastro['nome'])),
                 ft.DataCell(ft.Text(cadastro['cpf'])),
+                ft.DataCell(ft.Text(cadastro['rg'])),
+                ft.DataCell(ft.Text(cadastro['telefone'])),
+                ft.DataCell(ft.Text(cadastro['endereco'])),
+                ft.DataCell(ft.Text(cadastro['email'])),
                 ft.DataCell(
                     ft.Row(
                         [

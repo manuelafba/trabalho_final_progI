@@ -1,5 +1,6 @@
 import flet as ft
-import tela1
+import tela1, tela2
+
 
 def init(p):
     global page, telas, cadastros        
@@ -7,6 +8,7 @@ def init(p):
     cadastros = []    
     telas = {
         '0': tela1.view(),
+        '1': tela2.view(),
     }
     
 
@@ -28,5 +30,5 @@ def route_change(route):
     
 
 def menu(e):
-    
+    tela2.components["tabela"].current.rows = tela2.data_table()
     page.go(str(e.control.selected_index))

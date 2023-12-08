@@ -96,7 +96,8 @@ def view():
                                     ft.Container(
                                             content= ft.ElevatedButton(
                                                         text="Pesquisar", 
-                                                        icon="search"
+                                                        icon="search",
+                                                    
                                                     )#ElevatedButton   
                                     ),#Container                                 
                                 ],
@@ -115,7 +116,7 @@ def view():
                     actions=[toggledarklight]                   
                 ),    
             )
-    
+   
 def cadastrar(e, selected_file_path = None):
     print(selected_file_path)
 
