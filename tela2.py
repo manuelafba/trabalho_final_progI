@@ -17,16 +17,15 @@ def ler_csv():
 
 
 cadastros = ler_csv()  # Carregar os dados do CSV
-
 def view():
     return ft.View(
         "tela2",
         [
             ft.Column([
-                ft.TextField(ref=components['tf_pesquisa'], label='Pesquisar', on_change=None),
+                ft.TextField(ref=components['tf_pesquisa'], label='Pesquisar', on_change=pesquisar),
+                # ft.Row([fillNome, filltelefone, fillCPF, fillrg, fillendereco, fillnasciment, fillemail, fillacoes]),
                 ft.DataTable(
-                    width=float('inf'),
-                    ref=components['tabela'],
+                    
                     columns=[
                         ft.DataColumn(ft.Text("Nome")),
                         ft.DataColumn(ft.Text("Telefone")),
@@ -37,7 +36,8 @@ def view():
                         ft.DataColumn(ft.Text("E-mail")),
                         # ft.DataColumn(ft.Text("Upload de Foto")),
                         ft.DataColumn(ft.Text("Ações")),
-                    ],
+                    ],width=float('inf'),
+                    ref=components['tabela'],
                 ),
                 ft.Row([
                     ft.Container(
@@ -74,7 +74,7 @@ def data_line(cadastro):
                 ft.IconButton(
                     icon=ft.icons.EDIT,
                     icon_color="blue",
-                    icon_size=35,
+                    icon_size=20,
                     tooltip="Atualizar",
                     key=cadastro['CPF'],  # Corrigido para usar a chave correta 'CPF'
                     on_click=None
@@ -82,7 +82,7 @@ def data_line(cadastro):
                 ft.IconButton(
                     icon=ft.icons.REMOVE_CIRCLE,
                     icon_color="red",
-                    icon_size=35,
+                    icon_size=20,
                     tooltip="Remover",
                     key=cadastro['CPF'],  # Corrigido para usar a chave correta 'CPF'
                     on_click=None
@@ -96,6 +96,17 @@ def data_table():
     #print(data_rows)  # Adicionar este print para verificar as linhas de dados geradas
     return data_rows
 
-
 def navigate_to_tela1(e):
     c.page.go('0')
+
+def pesquisar(e):
+    value = components['tf_pesquisa'].current.value.lower()
+    filtered_rows = []
+
+    for cad in cadastros:
+        if value in cad['Nome'].lower() or value in cad['Telefone'] or value in cad['CPF'] or value in cad['RG'] or value in cad['Endereco'] or value in cad['Nascimento'] or value in cad['E-mail']:
+            filtered_rows.append(data_line(cad))  
+
+    components["tabela"].current.rows = [ft.DataRow(cells=row) for row in filtered_rows]
+    c.page.update()
+
