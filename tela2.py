@@ -13,11 +13,17 @@ def ler_csv():
     with open('bd.csv', newline='') as csvfile:
         reader = csv.DictReader(csvfile)
         data = list(reader)
+        # Adicionando a chave 'select' com o valor False para cada dicionário
+        for cadastro in data:
+            cadastro['selected'] = False
         return data
 
-
+selected = []
 cadastros = ler_csv()  # Carregar os dados do CSV
+you_selected = ft.Column()
+
 def view():
+    
     return ft.View(
         "tela2",
         [
@@ -34,8 +40,8 @@ def view():
                         ft.DataColumn(ft.Text("Endereço")),
                         ft.DataColumn(ft.Text("Nascimento")),
                         ft.DataColumn(ft.Text("E-mail")),
+                        ft.DataColumn(ft.Text("Actions")),
                         # ft.DataColumn(ft.Text("Upload de Foto")),
-                        ft.DataColumn(ft.Text("Ações")),
                     ],width=float('inf'),
                     ref=components['tabela'],
                 ),
@@ -46,6 +52,12 @@ def view():
                             on_click=navigate_to_tela1
                         )
                     ),
+                    ft.Container(
+                    content=ft.ElevatedButton(
+                        text="Excluir selecionados",
+                        on_click=removemultiple,
+                    )
+                ),
                 ],
                     alignment=ft.MainAxisAlignment.CENTER
                 )
@@ -60,36 +72,26 @@ def view():
     )
 
 def data_line(cadastro):
-    return [
-        ft.DataCell(ft.Text(cadastro['Nome'])),
-        ft.DataCell(ft.Text(cadastro['Telefone'])),
-        ft.DataCell(ft.Text(cadastro['CPF'])),
-        ft.DataCell(ft.Text(cadastro['RG'])),
-        ft.DataCell(ft.Text(cadastro['Endereco'])),
-        ft.DataCell(ft.Text(cadastro['Nascimento'])),
-        ft.DataCell(ft.Text(cadastro['E-mail'])),
-        # ft.DataCell(ft.Text(cadastro['Upload de Foto'])),
-        ft.DataCell(
-            ft.Row([
-                ft.IconButton(
-                    icon=ft.icons.EDIT,
-                    icon_color="blue",
-                    icon_size=20,
-                    tooltip="Atualizar",
-                    key=cadastro['CPF'],  # Corrigido para usar a chave correta 'CPF'
-                    on_click=None
-                ),
-                ft.IconButton(
-                    icon=ft.icons.REMOVE_CIRCLE,
-                    icon_color="red",
-                    icon_size=20,
-                    tooltip="Remover",
-                    key=cadastro['CPF'],  # Corrigido para usar a chave correta 'CPF'
-                    on_click=None
-                ),
-            ])
-        )
-    ]
+        return [
+            ft.DataCell(ft.Text(cadastro['Nome'])),
+            ft.DataCell(ft.Text(cadastro['Telefone'])),
+            ft.DataCell(ft.Text(cadastro['CPF'])),
+            ft.DataCell(ft.Text(cadastro['RG'])),
+            ft.DataCell(ft.Text(cadastro['Endereco'])),
+            ft.DataCell(ft.Text(cadastro['Nascimento'])),
+            ft.DataCell(ft.Text(cadastro['E-mail'])),
+            ft.DataCell(ft.Checkbox(value=cadastro['selected'],
+                data=ft.Row([
+                ft.Text(cadastro['Nome']),
+                ft.Text(cadastro['Telefone']),
+                ft.Text(cadastro['CPF']),
+                ft.Text(cadastro['RG']),
+                ft.Text(cadastro['Endereco']),
+                ft.Text(cadastro['Nascimento']),
+                ft.Text(cadastro['E-mail']),
+                ]),
+                on_change=this_seledted))
+]
 
 def data_table():
     data_rows = [ft.DataRow(cells=data_line(cad)) for cad in cadastros]
@@ -110,3 +112,98 @@ def pesquisar(e):
     components["tabela"].current.rows = [ft.DataRow(cells=row) for row in filtered_rows]
     c.page.update()
 
+def this_seledted(e):
+    select_name = ft.Text(e.control.data.controls[0].value)
+    select_telefone = ft.Text(e.control.data.controls[1].value)
+    select_cpf = ft.Text(e.control.data.controls[2].value)
+    select_rg= ft.Text(e.control.data.controls[3].value)
+    select_endereco = ft.Text(e.control.data.controls[4].value)
+    select_nascimento = ft.Text(e.control.data.controls[5].value)
+    select_email = ft.Text(e.control.data.controls[6].value)
+
+    if e.control.value == True:
+        you_selected.controls.append(ft.Row([select_name,select_telefone,select_cpf,select_rg,select_endereco,select_nascimento,select_email]))
+    else:
+        for c in you_selected.controls:
+            if isinstance(c,ft.Row):
+                if c.controls[0].value == select_name.value and c.controls[1].value == select_telefone.value:
+                    you_selected.controls.remove(c)
+                    break
+
+def remove_selected_from_cadastros(selected_indices):
+    global cadastros
+
+    # Remover os itens selecionados da lista 'cadastros' pelos índices
+    cadastros = [cad for idx, cad in enumerate(cadastros) if idx not in selected_indices]
+
+def removemultiple(e):
+    selected_indices = []
+
+    # Coletar os índices dos itens selecionados em 'you_selected'
+    for x in you_selected.controls:
+        delete_name = x.controls[0].value
+        delete_telefone = x.controls[1].value
+        delete_cpf = x.controls[2].value
+        delete_rg = x.controls[3].value
+        delete_endereco = x.controls[4].value
+        delete_nascimento = x.controls[5].value
+        delete_email = x.controls[6].value
+
+        for i in range(len(cadastros)):
+            if (
+                cadastros[i]['Nome'] == delete_name
+                and cadastros[i]['Telefone'] == delete_telefone
+                and cadastros[i]['CPF'] == delete_cpf
+                and cadastros[i]['RG'] == delete_rg
+                and cadastros[i]['Endereco'] == delete_endereco
+                and cadastros[i]['Nascimento'] == delete_nascimento
+                and cadastros[i]['E-mail'] == delete_email
+            ):
+                selected_indices.append(i)
+                break
+
+    # Remover os itens selecionados da lista 'cadastros'
+    remove_selected_from_cadastros(selected_indices)
+
+    # Atualizar a tabela com os dados restantes
+    components["tabela"].current.rows = data_table()
+
+    # Limpar you_selected após a exclusão
+    you_selected.controls.clear()
+
+    # Exibir um snackbar indicando sucesso na exclusão
+    c.page.snack_bar = ft.SnackBar(
+        ft.Text("Deletou com sucesso", size=20),
+        duration=800,
+        bgcolor="red"
+    )
+
+    c.page.snack_bar.open = True
+    atualizar_csv(selected_indices)
+    # Atualizar a página
+    c.page.update()
+
+import shutil
+
+# Função para atualizar o arquivo CSV excluindo as linhas selecionadas
+def atualizar_csv(selected_indices):
+    with open('bd.csv', newline='') as csvfile, open('temp_bd.csv', 'w', newline='') as tempcsvfile:
+        reader = csv.DictReader(csvfile)
+        fieldnames = reader.fieldnames
+
+        writer = csv.DictWriter(tempcsvfile, fieldnames=fieldnames)
+        writer.writeheader()
+
+        # Copiar as linhas, exceto as selecionadas, para o novo arquivo temporário
+        for idx, row in enumerate(reader):
+            if idx not in selected_indices:
+                writer.writerow(row)
+
+    # Substituir o arquivo original pelo novo arquivo temporário
+    shutil.move('temp_bd.csv', 'bd.csv')
+    global cadastros
+    cadastros = ler_csv()  # Recarregar os dados do arquivo CSV após a exclusão
+
+    # Atualizar a tabela com os dados recarregados
+    components["tabela"].current.rows = data_table()
+    c.page.update()

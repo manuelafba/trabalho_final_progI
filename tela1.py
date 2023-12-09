@@ -81,7 +81,7 @@ def view():
                             ft.TextField(ref=components['tf_cpf'], label="CPF", prefix_icon=ft.icons.DOCUMENT_SCANNER, helper_text="xxx.xxx.xxx-xx"),
                             ft.TextField(ref=components['tf_rg'], label="RG", prefix_icon=ft.icons.DOCUMENT_SCANNER, helper_text="xxxxxxx"),
                             ft.TextField(ref=components['tf_telefone'], label="Telefone", prefix_icon=ft.icons.PHONE, helper_text="(xx) xxxxx-xxxx"),
-                            ft.TextField(ref=components['tf_endereço'], label="Endereço",prefix_icon=ft.icons.HOME),
+                            ft.TextField(ref=components['tf_endereço'], label="Endereço",prefix_icon=ft.icons.HOME, helper_text="Deve conter no máximo 20 caracteres"),
                             ft.TextField(ref=components['tf_nascimento'], label="Nascimento",prefix_icon=ft.icons.STAR, helper_text="DD/MM/AAAA"),
                             ft.TextField(ref=components['tf_e-mail'], label="E-mail",prefix_icon=ft.icons.EMAIL,helper_text="name@example.com ou name@example.com.br"),
                             ft.Row(
@@ -136,6 +136,7 @@ def cadastrar(e, selected_file_path = None):
     components['tf_endereço'].current.error_text = error_message('endereco')
     components['tf_nascimento'].current.error_text = error_message('nascimento')
     components['tf_e-mail'].current.error_text = error_message('email')
+    # exibir_snackbar_imagem_salva(selected_file_path)
     c.page.update()
 
     # Se todos os campos forem válidos, escreva no arquivo CSV
@@ -159,7 +160,24 @@ def cadastrar(e, selected_file_path = None):
         components['tf_e-mail'].current.value = ''
         selected_file_path = None
         image_holder.visible = False
+        c.page.snack_bar = ft.SnackBar(
+        ft.Text("Cadastro realizado com sucesso", size=20),
+        duration=800,
+        bgcolor="green"
+        )
+        c.page.snack_bar.open = True
+        tela2.atualizar_csv([])
         c.page.update()
+
+# def exibir_snackbar_imagem_salva(selected_file_path):
+#     if selected_file_path is None:
+#         snack_bar = ft.SnackBar(
+#             ft.Text("Você deve escolher uma foto", size=20),
+#             duration=800,
+#             bgcolor="red"
+#         )
+#         c.snack_bar.open = True
+#     c.page.snack_bar = c.snack_bar
 
 def validar_nome(nome):
     # Verifica se o nome não contém números
@@ -192,7 +210,7 @@ def validar_nascimento(data):
 
 def validar_endereco(endereco):
     # Validação simples de endereço
-    return len(endereco) >= 5  # Exemplo: endereço deve ter pelo menos 5 caracteres
+    return 20 >= len(endereco) >= 5  # Exemplo: endereço deve ter pelo menos 5 caracteres
 
 def error_message(data):
     try:
