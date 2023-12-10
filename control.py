@@ -19,16 +19,8 @@ def route_change(route):
     )          
     page.update()
 
-# def barra_navegacao():
-#     return ft.NavigationBar(
-#                         destinations=[
-#                             ft.NavigationDestination(icon=ft.icons.SAVE, label="Cadastrar"),
-#                             ft.NavigationDestination(icon=ft.icons.SEARCH, label="Pesquisar"),                            
-#                         ],
-#                         on_change= menu
-#             )#NavigationBar
-    
+
 
 def menu(e):
     tela2.components["tabela"].current.rows = tela2.data_table()
-    # page.go(str(e.control.selected_index))
+    
