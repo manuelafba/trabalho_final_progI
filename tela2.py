@@ -67,8 +67,8 @@ def view():
         ],
         appbar=ft.AppBar(
             title=ft.Text("Sistema de cadastro"),
-            center_title=False,
-            bgcolor=ft.colors.SURFACE_VARIANT,
+            center_title=True,
+            bgcolor=ft.colors.RED_900,
         ),
     )
 
@@ -113,6 +113,7 @@ def pesquisar(e):
 
     for cad in cadastros:
         if value in cad['Nome'].lower() or value in cad['Telefone'] or value in cad['CPF'] or value in cad['RG'] or value in cad['Endereco'] or value in cad['Nascimento'] or value in cad['E-mail']:
+            
             filtered_rows.append(data_line(cad))  
 
     components["tabela"].current.rows = [ft.DataRow(cells=row) for row in filtered_rows]

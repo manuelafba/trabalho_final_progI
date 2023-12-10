@@ -140,7 +140,7 @@ def atualizar(e, selected_file_path = None):
       uid = ''
       c.page.snack_bar = ft.SnackBar(
       ft.Text("Cadastro editado com sucesso!", size=20),
-      duration=800,
+      duration=2000,
       bgcolor="green"
       )
       c.page.snack_bar.open = True
