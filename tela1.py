@@ -79,7 +79,7 @@ def view():
                                 ]),
                             ft.TextField(ref=components['tf_nome'], label="Nome", autofocus=True,prefix_icon=ft.icons.PERSON, helper_text="Apenas letras"),
                             ft.TextField(ref=components['tf_cpf'], label="CPF", prefix_icon=ft.icons.DOCUMENT_SCANNER, helper_text="xxx.xxx.xxx-xx"),
-                            ft.TextField(ref=components['tf_rg'], label="RG", prefix_icon=ft.icons.DOCUMENT_SCANNER, helper_text="xxxxxxx"),
+                            ft.TextField(ref=components['tf_rg'], label="RG", prefix_icon=ft.icons.DOCUMENT_SCANNER, helper_text="Deve conter 7 digitos"),
                             ft.TextField(ref=components['tf_telefone'], label="Telefone", prefix_icon=ft.icons.PHONE, helper_text="(xx) xxxxx-xxxx"),
                             ft.TextField(ref=components['tf_endereço'], label="Endereço",prefix_icon=ft.icons.HOME, helper_text="Deve conter no máximo 20 caracteres"),
                             ft.TextField(ref=components['tf_nascimento'], label="Nascimento",prefix_icon=ft.icons.STAR, helper_text="DD/MM/AAAA"),
@@ -128,7 +128,8 @@ def cadastrar(e, selected_file_path = None):
     endereco = components['tf_endereço'].current.value
     nascimento = components['tf_nascimento'].current.value
     email = components['tf_e-mail'].current.value
-
+    import csv
+    import uuid
     components['tf_nome'].current.error_text = error_message('nome')
     components['tf_cpf'].current.error_text = error_message('cpf')
     components['tf_rg'].current.error_text = error_message('rg')
@@ -139,17 +140,40 @@ def cadastrar(e, selected_file_path = None):
     # exibir_snackbar_imagem_salva(selected_file_path)
     c.page.update()
 
-    # Se todos os campos forem válidos, escreva no arquivo CSV
+    # # Se todos os campos forem válidos, escreva no arquivo CSV
+    # if validar_nome(nome) and validar_telefone(telefone) and validar_cpf(cpf) and validar_rg(rg) and validar_email(email) and validar_nascimento(nascimento) and validar_endereco(endereco) and selected_file_path is not None:
+    #     dados = [
+    #         [nome, telefone, cpf, rg, endereco, nascimento, email, selected_file_path]]
+
+    #     # Abre o arquivo em modo de escrita
+    #     with open('bd.csv', 'a') as arquivo:
+    #         # arquivo.write('Nome,Telefone,CPF,RG,Endereco,Nascimento,E-mail,Upload de Foto\n')
+    #         for linha in dados:
+    #             arquivo.write(','.join(linha) + '\n')
     if validar_nome(nome) and validar_telefone(telefone) and validar_cpf(cpf) and validar_rg(rg) and validar_email(email) and validar_nascimento(nascimento) and validar_endereco(endereco) and selected_file_path is not None:
         dados = [
             [nome, telefone, cpf, rg, endereco, nascimento, email, selected_file_path]]
 
-        # Abre o arquivo em modo de escrita
-        with open('bd.csv', 'a') as arquivo:
-            # arquivo.write('Nome,Telefone,CPF,RG,Endereco,Nascimento,E-mail,Upload de Foto\n')
-            for linha in dados:
-                arquivo.write(','.join(linha) + '\n')
+        # Abre o arquivo CSV em modo de leitura para determinar o último ID usado
+        with open('bd.csv', 'r', newline='') as arquivo_leitura:
+            reader = csv.DictReader(arquivo_leitura)
+            ids_existentes = set([linha['id'] for linha in reader])
 
+        # Abre o arquivo CSV em modo de escrita e adiciona os novos dados com IDs
+        with open('bd.csv', 'a', newline='') as arquivo:
+            fieldnames = ['Nome', 'Telefone', 'CPF', 'RG', 'Endereco', 'Nascimento', 'E-mail', 'Upload de Foto','id']
+            writer = csv.DictWriter(arquivo, fieldnames=fieldnames)
+
+            # Cria um novo ID único para cada linha de dados e verifica se é único
+            for linha in dados:
+                novo_id = str(uuid.uuid4())
+                while novo_id in ids_existentes:  # Garante que o ID seja único
+                    novo_id = str(uuid.uuid4())
+                ids_existentes.add(novo_id)
+
+                # Cria um dicionário com os dados e o novo ID
+                linha_com_id = {'Nome': linha[0], 'Telefone': linha[1], 'CPF': linha[2], 'RG': linha[3], 'Endereco': linha[4], 'Nascimento': linha[5], 'E-mail': linha[6], 'Upload de Foto': linha[7],'id': novo_id,}
+                writer.writerow(linha_com_id)
         #Zera os TextFields
         components['tf_nome'].current.value = ''    
         components['tf_cpf'].current.value = ''
