@@ -28,10 +28,11 @@ def view():
     return ft.View(
         "tela2",
         [
-            ft.Column([
-                ft.TextField(ref=components['tf_pesquisa'], label='Pesquisar', on_change=pesquisar),
-                # ft.Row([fillNome, filltelefone, fillCPF, fillrg, fillendereco, fillnasciment, fillemail, fillacoes]),
-                ft.DataTable(
+            ft.Column([ 
+                    ft.Row([ft.Container( content=ft.Text("Área de Pesquisa de Cadastros", size=20))],alignment=ft.MainAxisAlignment.CENTER),
+                    ft.TextField(ref=components['tf_pesquisa'], label='Pesquisar', on_change=pesquisar),
+                    # ft.Row([fillNome, filltelefone, fillCPF, fillrg, fillendereco, fillnasciment, fillemail, fillacoes]),
+                    ft.DataTable(
                     
                     columns=[
                         ft.DataColumn(ft.Text("Nome")),
@@ -66,7 +67,7 @@ def view():
                         expand=True,),
         ],
         appbar=ft.AppBar(
-            title=ft.Text("Sistema de cadastro"),
+            title=ft.Text("Sistema de cadastro",font_family="RobotoSlab",weight=ft.FontWeight.BOLD),
             center_title=True,
             bgcolor=ft.colors.RED_900,
         ),
