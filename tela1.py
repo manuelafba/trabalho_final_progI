@@ -38,11 +38,11 @@ def changetheme(e):
     c.page.theme_mode = "light" if c.page.theme_mode =="dark" else "dark"
     c.page.update()
  
-    c.time.sleep(0.5)
+    
  
     toggledarklight.selected = not toggledarklight.selected
  
-    c.page.splash.visible = False
+    
     c.page.update()
 
 toggledarklight = ft.IconButton(
@@ -65,7 +65,7 @@ def view():
                 [                           
                     ft.Column(
                         [
-                            ft.Row([ft.Container( content=ft.Text("Cadastro", size=20))],alignment=ft.MainAxisAlignment.CENTER),
+                            ft.Row([ft.Container( content=ft.Text("Área de Preenchimento de Cadastro", size=20))],alignment=ft.MainAxisAlignment.CENTER),
                             ft.Column([
                                 ft.Row([image_holder],alignment=ft.MainAxisAlignment.CENTER),
                                 ft.Row([
@@ -77,13 +77,17 @@ def view():
                                 ))
                                 ],alignment=ft.MainAxisAlignment.CENTER)#Container,
                                 ]),
+                            ft.Row([
                             ft.TextField(ref=components['tf_nome'], label="Nome", autofocus=True,prefix_icon=ft.icons.PERSON, helper_text="Apenas letras"),
                             ft.TextField(ref=components['tf_cpf'], label="CPF", prefix_icon=ft.icons.DOCUMENT_SCANNER, helper_text="xxx.xxx.xxx-xx"),
                             ft.TextField(ref=components['tf_rg'], label="RG", prefix_icon=ft.icons.DOCUMENT_SCANNER, helper_text="xxxxxxx"),
-                            ft.TextField(ref=components['tf_telefone'], label="Telefone", prefix_icon=ft.icons.PHONE, helper_text="(xx) xxxxx-xxxx"),
+                            ft.TextField(ref=components['tf_telefone'], label="Telefone", prefix_icon=ft.icons.PHONE, helper_text="(xx) xxxxx-xxxx")
+                            ]),
+                            ft.Row([
                             ft.TextField(ref=components['tf_endereço'], label="Endereço",prefix_icon=ft.icons.HOME, helper_text="Deve conter no máximo 20 caracteres"),
                             ft.TextField(ref=components['tf_nascimento'], label="Nascimento",prefix_icon=ft.icons.STAR, helper_text="DD/MM/AAAA"),
-                            ft.TextField(ref=components['tf_e-mail'], label="E-mail",prefix_icon=ft.icons.EMAIL,helper_text="name@example.com ou name@example.com.br"),
+                            ft.TextField(ref=components['tf_e-mail'], label="E-mail",prefix_icon=ft.icons.EMAIL,helper_text="name@example.com ou name@example.com.br")
+                            ]),
                             ft.Row(
                                 [
                                     ft.Container(
@@ -109,17 +113,17 @@ def view():
                         expand=True,
                     ),                    
                 ],
-                # navigation_bar= c.barra_navegacao(),
+                
                 appbar= ft.AppBar(            
-                    title=ft.Text("Sistema de cadastro"),
-                    center_title=False,
-                    bgcolor=ft.colors.SURFACE_VARIANT,
+                    title=ft.Text("Sistema de cadastro", font_family="RobotoSlab",weight=ft.FontWeight.BOLD),
+                    center_title=True,
+                    bgcolor=ft.colors.RED_900,
                     actions=[toggledarklight]                   
                 ),    
             )
     
 def cadastrar(e, selected_file_path = None):
-    print(selected_file_path)
+    
 
     nome = components['tf_nome'].current.value
     cpf = components['tf_cpf'].current.value
@@ -162,7 +166,7 @@ def cadastrar(e, selected_file_path = None):
         image_holder.visible = False
         c.page.snack_bar = ft.SnackBar(
         ft.Text("Cadastro realizado com sucesso", size=20),
-        duration=800,
+        duration=2000,
         bgcolor="green"
         )
         c.page.snack_bar.open = True
