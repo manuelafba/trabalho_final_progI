@@ -273,10 +273,23 @@ def error_message(data):
                 raise ValueError("Por favor preencha o seu email.")
         elif data == 'nascimento':
             # Validação da data de nascimento
+            
+                    
             if not validar_nascimento(components['tf_nascimento'].current.value) and components['tf_nascimento'].current.value:
                 raise ValueError("Data de nascimento inválida(formato: DD/MM/AAAA)")
             elif not components['tf_nascimento'].current.value:
                 raise ValueError("Por favor preencha a sua data de nascimento.")
+            
+            if components['tf_nascimento'].current.value:
+                nascimento=components['tf_nascimento'].current.value
+                dia=int(nascimento[0]+nascimento[1])
+                mes=int(nascimento[3]+nascimento[4])
+                ano=int(nascimento[6]+nascimento[7]+nascimento[8]+nascimento[9])
+                
+                if not (0<dia<32  and 0<mes<13 and 1899<ano<2024):
+                    raise ValueError("Data de nascimento impossivel")
+                
+                
         elif data == 'endereco':
             if not validar_endereco(components['tf_endereço'].current.value) and components['tf_endereço'].current.value:
                 raise ValueError("Endereço inválido")
